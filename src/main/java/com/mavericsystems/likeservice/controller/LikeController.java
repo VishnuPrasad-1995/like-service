@@ -26,4 +26,8 @@ public class LikeController {
     public ResponseEntity<Like> createLike(@PathVariable("postOrCommentId") String postOrCommentId,@RequestBody LikeRequest likeRequest){
         return new ResponseEntity<>(likeService.createLike(postOrCommentId,likeRequest), HttpStatus.CREATED);
     }
+    @GetMapping("/{postOrCommentId}/likes/{likeId}")
+    public ResponseEntity<LikeDto> getLikeDetails(@PathVariable("postOrCommentId") String postOrCommentId, @PathVariable("likeId") String likeId){
+        return new ResponseEntity<>(likeService.getLikeDetails(postOrCommentId,likeId), HttpStatus.OK);
+    }
 }
