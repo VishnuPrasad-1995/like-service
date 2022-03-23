@@ -52,6 +52,22 @@ public class LikeServiceImpl implements LikeService {
 
 
     }
+    @Override
+    public Map<String,Like> removeLike(String postOrCommentId, String likeId) {
+        Like like = likeRepo.findByPcIdAndId(postOrCommentId,likeId);
+        likeRepo.deleteById(likeId);
+        Map<String,Like> body = new HashMap<>();
+        body.put(DELETELIKE,like);
+        return body;
+    }
+
+
+
+    @Override
+    public int getLikesCount(String postOrCommentId) {
+        List<Like> likes = likeRepo.findByPcId(postOrCommentId);
+        return likes.size();
+    }
 
 
 }

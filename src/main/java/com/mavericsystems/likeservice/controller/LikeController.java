@@ -30,4 +30,12 @@ public class LikeController {
     public ResponseEntity<LikeDto> getLikeDetails(@PathVariable("postOrCommentId") String postOrCommentId, @PathVariable("likeId") String likeId){
         return new ResponseEntity<>(likeService.getLikeDetails(postOrCommentId,likeId), HttpStatus.OK);
     }
+    @DeleteMapping("/{postOrCommentId}/likes/{likeId}")
+    public ResponseEntity<Map<String,Like>> removeLike(@PathVariable("postOrCommentId") String postOrCommentId, @PathVariable("likeId") String likeId){
+        return new ResponseEntity<>(likeService.removeLike(postOrCommentId,likeId), HttpStatus.OK);
+    }
+    @GetMapping("/{postOrCommentId}/likes/count")
+    public ResponseEntity<Integer> getLikesCount(@PathVariable("postOrCommentId") String postOrCommentId){
+        return new ResponseEntity<>(likeService.getLikesCount(postOrCommentId),HttpStatus.OK);
+    }
 }
