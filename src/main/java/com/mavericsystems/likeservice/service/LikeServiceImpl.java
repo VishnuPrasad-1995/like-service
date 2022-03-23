@@ -41,18 +41,20 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public Like createLike(String postOrCommentId, LikeRequest likeRequest) {
+    public LikeDto createLike(String postOrCommentId, LikeRequest likeRequest) {
         Like like = new Like();
         like.setPcId(likeRequest.getPostOrCommentId());
         like.setLikedBy(likeRequest.getLikedBy());
         like.setLocalDate(LocalDate.now());
-        return likeRepo.save(like);
+        likeRepo.save(like);
+        return new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()).getEmail(), like.getLocalDate());
+
     }
     @Override
     public LikeDto getLikeDetails(String postOrCommentId, String likeId) {
         try {
             Like like = likeRepo.findByPcIdAndId(postOrCommentId, likeId);
-            return new LikeDto(like.getId(), like.getPcId(), like.getLikedBy(), like.getLocalDate(), userFeign.getUserById(like.getLikedBy()));
+            return new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()).getEmail(), like.getLocalDate());
         }
         catch (Exception e){
             throw new LikeNotFoundException("No like found : "+ likeId);
