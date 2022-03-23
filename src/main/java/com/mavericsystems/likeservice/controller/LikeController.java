@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.QueryParam;
 import java.util.List;
 import java.util.Map;
 
@@ -19,8 +20,8 @@ public class LikeController {
     LikeService likeService;
 
     @GetMapping("/{postOrCommentId}/likes")
-    public ResponseEntity<List<Like>> getLikes(@PathVariable("postOrCommentId") String postOrCommentId){
-        return new ResponseEntity<>(likeService.getLikes(postOrCommentId), HttpStatus.OK);
+    public ResponseEntity<List<Like>> getLikes(@PathVariable("postOrCommentId") String postOrCommentId, @QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize){
+        return new ResponseEntity<>(likeService.getLikes(postOrCommentId,page,pageSize), HttpStatus.OK);
     }
     @PostMapping("/{postOrCommentId}/likes")
     public ResponseEntity<Like> createLike(@PathVariable("postOrCommentId") String postOrCommentId,@RequestBody LikeRequest likeRequest){

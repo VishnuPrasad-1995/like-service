@@ -7,6 +7,8 @@ import com.mavericsystems.likeservice.feign.UserFeign;
 import com.mavericsystems.likeservice.model.Like;
 import com.mavericsystems.likeservice.repo.LikeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -26,8 +28,16 @@ public class LikeServiceImpl implements LikeService {
     @Autowired
     UserFeign userFeign;
     @Override
-    public List<Like> getLikes(String postOrCommentId) {
-        return likeRepo.findByPcId(postOrCommentId);
+    public List<Like> getLikes(String postOrCommentId, Integer page, Integer pageSize) {
+        if(page==null){
+            page=1;
+        }
+        if(pageSize==null){
+            pageSize=10;
+        }
+        List<Like> Likes = likeRepo.findByPcId(postOrCommentId,PageRequest.of(page-1, pageSize));
+
+        return Likes;
     }
 
     @Override
