@@ -24,7 +24,7 @@ public class LikeController {
         return new ResponseEntity<>(likeService.getLikes(postOrCommentId,page,pageSize), HttpStatus.OK);
     }
     @PostMapping("/{postOrCommentId}/likes")
-    public ResponseEntity<Like> createLike(@PathVariable("postOrCommentId") String postOrCommentId,@RequestBody LikeRequest likeRequest){
+    public ResponseEntity<LikeDto> createLike(@PathVariable("postOrCommentId") String postOrCommentId,@RequestBody LikeRequest likeRequest){
         return new ResponseEntity<>(likeService.createLike(postOrCommentId,likeRequest), HttpStatus.CREATED);
     }
     @GetMapping("/{postOrCommentId}/likes/{likeId}")
@@ -36,7 +36,7 @@ public class LikeController {
         return new ResponseEntity<>(likeService.removeLike(postOrCommentId,likeId), HttpStatus.OK);
     }
     @GetMapping("/{postOrCommentId}/likes/count")
-    public ResponseEntity<Integer> getLikesCount(@PathVariable("postOrCommentId") String postOrCommentId){
-        return new ResponseEntity<>(likeService.getLikesCount(postOrCommentId),HttpStatus.OK);
+    public Integer getLikesCount(@PathVariable("postOrCommentId") String postOrCommentId){
+        return likeService.getLikesCount(postOrCommentId);
     }
 }
