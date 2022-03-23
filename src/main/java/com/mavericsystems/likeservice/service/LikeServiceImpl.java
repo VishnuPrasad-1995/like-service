@@ -30,4 +30,13 @@ public class LikeServiceImpl implements LikeService {
         return likeRepo.findByPcId(postOrCommentId);
     }
 
+    @Override
+    public Like createLike(String postOrCommentId, LikeRequest likeRequest) {
+        Like like = new Like();
+        like.setPcId(likeRequest.getPostOrCommentId());
+        like.setLikedBy(likeRequest.getLikedBy());
+        like.setLocalDate(LocalDate.now());
+        return likeRepo.save(like);
+    }
+
 }
