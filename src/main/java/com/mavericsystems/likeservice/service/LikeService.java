@@ -9,5 +9,6 @@ import java.util.Map;
 
 public interface LikeService {
     List<Like> getLikes(String postOrCommentId);
+    Like createLike(String postOrCommentId, LikeRequest likeRequest);
 
 }
