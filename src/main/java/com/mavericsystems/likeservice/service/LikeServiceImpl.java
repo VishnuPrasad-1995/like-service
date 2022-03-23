@@ -49,7 +49,6 @@ public class LikeServiceImpl implements LikeService {
         like.setLocalDate(LocalDate.now());
         likeRepo.save(like);
         return new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()), like.getLocalDate());
-
     }
     @Override
     public LikeDto getLikeDetails(String postOrCommentId, String likeId) {
