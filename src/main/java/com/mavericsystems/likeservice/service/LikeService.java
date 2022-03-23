@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 public interface LikeService {
-    List<Like> getLikes(String postOrCommentId,Integer page,Integer pageSize);
+    List<LikeDto> getLikes(String postOrCommentId,Integer page,Integer pageSize);
     LikeDto getLikeDetails(String postOrCommentId,String likeId);
-    Like createLike(String postOrCommentId, LikeRequest likeRequest);
-    Map<String,Like> removeLike(String postOrCommentId, String likeId);
-    int getLikesCount(String postOrCommentId);
+    LikeDto createLike(String postOrCommentId, LikeRequest likeRequest);
+    LikeDto removeLike(String postOrCommentId, String likeId);
+    Integer getLikesCount(String postOrCommentId);
 
 }

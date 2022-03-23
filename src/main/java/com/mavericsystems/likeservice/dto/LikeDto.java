@@ -11,7 +11,6 @@ import java.time.LocalDate;
 public class LikeDto {
     private String id;
     private String postOrCommentId;
-    private String likedBy;
+    private UserDto likedBy;
     private LocalDate localDate;
-    private UserDto userDto;
 }
