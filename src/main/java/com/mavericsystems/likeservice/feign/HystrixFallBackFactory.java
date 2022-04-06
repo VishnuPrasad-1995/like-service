@@ -9,10 +9,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class HystrixFallBackFactory implements FallbackFactory<UserFeign> {
     private static Logger logger = LoggerFactory.getLogger(HystrixFallBackFactory.class);
+
     @Override
     public UserFeign create(Throwable cause) {
-            logger.info("fallback reason was: {}" + cause.getMessage());
-            return null;
+        logger.info("fallback reason was: {}" + cause.getMessage());
+        return null;
     }
 
 

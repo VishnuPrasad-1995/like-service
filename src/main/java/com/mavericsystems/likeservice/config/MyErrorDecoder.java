@@ -18,14 +18,14 @@ public class MyErrorDecoder implements ErrorDecoder {
     public Exception decode(String s, Response response) {
         Exception exception = defaultErrorDecoder.decode(s, response);
 
-        if(exception instanceof RetryableException){
+        if (exception instanceof RetryableException) {
             return exception;
         }
 
 
-        if(response.status() == 503){
+        if (response.status() == 503) {
             logger.info("Retrying in ...");
-            return new RetryableException(response.status(), "503 error", response.request().httpMethod(), new Date(),response.request());
+            return new RetryableException(response.status(), "503 error", response.request().httpMethod(), new Date(), response.request());
         }
 
         return exception;

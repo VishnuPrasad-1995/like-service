@@ -12,6 +12,7 @@ import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,42 +27,41 @@ public class LikeServiceImpl implements LikeService {
 
     @Autowired
     UserFeign userFeign;
+
     @Override
     public List<LikeDto> getLikes(String postOrCommentId, Integer page, Integer pageSize) {
-        try{
-            if(page==null){
-                page=1;
+        try {
+            if (page == null) {
+                page = 1;
             }
-            if(pageSize==null){
-                pageSize=10;
+            if (pageSize == null) {
+                pageSize = 10;
             }
-            List<Like> likes = likeRepo.findByPcId(postOrCommentId,PageRequest.of(page-1, pageSize));
+            List<Like> likes = likeRepo.findByPcId(postOrCommentId, PageRequest.of(page - 1, pageSize));
             List<LikeDto> likeDtoList = new ArrayList<>();
-            for (Like like : likes){
+            for (Like like : likes) {
                 likeDtoList.add(new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()), like.getCreatedAt()));
             }
-            if(likeDtoList.isEmpty()){
-                throw new LikeNotFoundException(LIKENOTFOUNDFORPOSTORCOMMENT + postOrCommentId);
+            if (likeDtoList.isEmpty()) {
+                throw new LikeNotFoundException(LIKE_NOT_FOUND_FOR_POST_OR_COMMENT + postOrCommentId);
             }
             return likeDtoList;
-        }
-        catch (FeignException | HystrixRuntimeException e){
-            throw new CustomFeignException(FEIGNEXCEPTON);
+        } catch (FeignException | HystrixRuntimeException e) {
+            throw new CustomFeignException(FEIGN_EXCEPTION);
         }
     }
 
     @Override
     public LikeDto createLike(String postOrCommentId, LikeRequest likeRequest) {
-        try{
+        try {
             Like like = new Like();
             like.setPcId(likeRequest.getPostOrCommentId());
             like.setLikedBy(likeRequest.getLikedBy());
             like.setCreatedAt(LocalDate.now());
             likeRepo.save(like);
             return new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()), like.getCreatedAt());
-        }
-        catch (FeignException | HystrixRuntimeException e){
-            throw new CustomFeignException(FEIGNEXCEPTON);
+        } catch (FeignException | HystrixRuntimeException e) {
+            throw new CustomFeignException(FEIGN_EXCEPTION);
         }
 
     }
@@ -70,39 +70,36 @@ public class LikeServiceImpl implements LikeService {
     public LikeDto getLikeDetails(String postOrCommentId, String likeId) {
         try {
             Like like = likeRepo.findByPcIdAndId(postOrCommentId, likeId);
-            if(like == null){
-                throw new LikeNotFoundException(LIKENOTFOUNDFORPOSTORCOMMENT + postOrCommentId + LIKEID + likeId);
+            if (like == null) {
+                throw new LikeNotFoundException(LIKE_NOT_FOUND_FOR_POST_OR_COMMENT + postOrCommentId + LIKE_ID + likeId);
             }
             return new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()), like.getCreatedAt());
-        }
-        catch (FeignException | HystrixRuntimeException e){
-            throw new CustomFeignException(FEIGNEXCEPTON);
+        } catch (FeignException | HystrixRuntimeException e) {
+            throw new CustomFeignException(FEIGN_EXCEPTION);
         }
     }
 
     @Override
     public LikeDto removeLike(String postOrCommentId, String likeId) {
-        try{
-            Like like = likeRepo.findByPcIdAndId(postOrCommentId,likeId);
-            if(like == null){
-                throw new LikeNotFoundException(LIKENOTFOUNDFORPOSTORCOMMENT + postOrCommentId + LIKEID + likeId);
+        try {
+            Like like = likeRepo.findByPcIdAndId(postOrCommentId, likeId);
+            if (like == null) {
+                throw new LikeNotFoundException(LIKE_NOT_FOUND_FOR_POST_OR_COMMENT + postOrCommentId + LIKE_ID + likeId);
             }
             likeRepo.deleteById(likeId);
             return new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()), like.getCreatedAt());
-        }
-        catch (FeignException | HystrixRuntimeException e){
-            throw new CustomFeignException(FEIGNEXCEPTON);
+        } catch (FeignException | HystrixRuntimeException e) {
+            throw new CustomFeignException(FEIGN_EXCEPTION);
         }
     }
 
     @Override
     public Integer getLikesCount(String postOrCommentId) {
-        try{
+        try {
             List<Like> likes = likeRepo.findByPcId(postOrCommentId);
             return likes.size();
-        }
-        catch (Exception e){
-            throw new LikeNotFoundException(LIKENOTFOUNDFORPOSTORCOMMENT+ postOrCommentId);
+        } catch (Exception e) {
+            throw new LikeNotFoundException(LIKE_NOT_FOUND_FOR_POST_OR_COMMENT + postOrCommentId);
         }
     }
 }

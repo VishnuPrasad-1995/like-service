@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 @Slf4j
 public class FeignClientRetryer implements Retryer {
     private static Logger logger = LoggerFactory.getLogger(FeignClientRetryer.class);
+
     @Override
     public void continueOrPropagate(RetryableException e) {
         throw e;
