@@ -20,7 +20,5 @@ public class FeignClientRetryer implements Retryer {
         return new Default(1000000, 1000000, 5);
     }
 
-
-
 }
 
