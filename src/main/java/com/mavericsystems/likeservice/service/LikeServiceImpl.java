@@ -7,14 +7,16 @@ import com.mavericsystems.likeservice.exception.LikeNotFoundException;
 import com.mavericsystems.likeservice.feign.UserFeign;
 import com.mavericsystems.likeservice.model.Like;
 import com.mavericsystems.likeservice.repo.LikeRepo;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import static com.mavericsystems.likeservice.constant.LikeConstant.FEIGNEXCEPTON;
-import static com.mavericsystems.likeservice.constant.LikeConstant.LIKENOTFOUND;
+
+import static com.mavericsystems.likeservice.constant.LikeConstant.*;
 
 
 @Service
@@ -39,14 +41,11 @@ public class LikeServiceImpl implements LikeService {
                 likeDtoList.add(new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()), like.getCreatedAt()));
             }
             if(likeDtoList.isEmpty()){
-                throw new LikeNotFoundException(LIKENOTFOUND + postOrCommentId);
+                throw new LikeNotFoundException(LIKENOTFOUNDFORPOSTORCOMMENT + postOrCommentId);
             }
             return likeDtoList;
         }
-        catch (feign.FeignException e){
-            throw new CustomFeignException(FEIGNEXCEPTON);
-        }
-        catch (com.netflix.hystrix.exception.HystrixRuntimeException e){
+        catch (FeignException | HystrixRuntimeException e){
             throw new CustomFeignException(FEIGNEXCEPTON);
         }
     }
@@ -61,10 +60,7 @@ public class LikeServiceImpl implements LikeService {
             likeRepo.save(like);
             return new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()), like.getCreatedAt());
         }
-        catch (feign.FeignException e){
-            throw new CustomFeignException(FEIGNEXCEPTON);
-        }
-        catch (com.netflix.hystrix.exception.HystrixRuntimeException e){
+        catch (FeignException | HystrixRuntimeException e){
             throw new CustomFeignException(FEIGNEXCEPTON);
         }
 
@@ -74,16 +70,13 @@ public class LikeServiceImpl implements LikeService {
     public LikeDto getLikeDetails(String postOrCommentId, String likeId) {
         try {
             Like like = likeRepo.findByPcIdAndId(postOrCommentId, likeId);
+            if(like == null){
+                throw new LikeNotFoundException(LIKENOTFOUNDFORPOSTORCOMMENT + postOrCommentId + LIKEID + likeId);
+            }
             return new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()), like.getCreatedAt());
         }
-        catch (feign.FeignException e){
+        catch (FeignException | HystrixRuntimeException e){
             throw new CustomFeignException(FEIGNEXCEPTON);
-        }
-        catch (com.netflix.hystrix.exception.HystrixRuntimeException e){
-            throw new CustomFeignException(FEIGNEXCEPTON);
-        }
-        catch (Exception e){
-            throw new LikeNotFoundException(LIKENOTFOUND+ likeId);
         }
     }
 
@@ -91,17 +84,14 @@ public class LikeServiceImpl implements LikeService {
     public LikeDto removeLike(String postOrCommentId, String likeId) {
         try{
             Like like = likeRepo.findByPcIdAndId(postOrCommentId,likeId);
+            if(like == null){
+                throw new LikeNotFoundException(LIKENOTFOUNDFORPOSTORCOMMENT + postOrCommentId + LIKEID + likeId);
+            }
             likeRepo.deleteById(likeId);
             return new LikeDto(like.getId(), like.getPcId(), userFeign.getUserById(like.getLikedBy()), like.getCreatedAt());
         }
-        catch (feign.FeignException e){
+        catch (FeignException | HystrixRuntimeException e){
             throw new CustomFeignException(FEIGNEXCEPTON);
-        }
-        catch (com.netflix.hystrix.exception.HystrixRuntimeException e){
-            throw new CustomFeignException(FEIGNEXCEPTON);
-        }
-        catch (Exception e){
-            throw new LikeNotFoundException(LIKENOTFOUND+ likeId);
         }
     }
 
@@ -112,9 +102,7 @@ public class LikeServiceImpl implements LikeService {
             return likes.size();
         }
         catch (Exception e){
-            throw new LikeNotFoundException(LIKENOTFOUND+ postOrCommentId);
+            throw new LikeNotFoundException(LIKENOTFOUNDFORPOSTORCOMMENT+ postOrCommentId);
         }
     }
-
-
 }
