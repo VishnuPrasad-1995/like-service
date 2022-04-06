@@ -18,7 +18,7 @@ public class Like {
     private String id;
     private String pcId;
     private String likedBy;
-    private LocalDate localDate;
+    private LocalDate createdAt;
 
 
 }
