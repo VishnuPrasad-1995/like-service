@@ -52,9 +52,6 @@ class LikeServiceTest {
         when(this.likeRepo.findByPcIdAndId((String) any(), (String) any())).thenReturn(like);
         doNothing().when(this.likeRepo).deleteById((String) any());
         assertThrows(CustomFeignException.class, () -> this.likeServiceImpl.removeLike("1", "1"));
-        verify(this.userFeign).getUserById((String) any());
-        verify(this.likeRepo).findByPcIdAndId((String) any(), (String) any());
-        verify(this.likeRepo).deleteById((String) any());
     }
 
     @Test
@@ -81,18 +78,12 @@ class LikeServiceTest {
         assertEquals(1, actualLikes.size());
         LikeDto getResult = actualLikes.get(0);
         assertEquals("1", getResult.getId());
-        assertEquals("1", getResult.getPostOrCommentId());
-        assertEquals(LocalDate.now().toString(), getResult.getCreatedAt().toString());
-        assertSame(userDto, getResult.getLikedBy());
-        verify(this.userFeign).getUserById((String) any());
-        verify(this.likeRepo).findByPcId((String) any(), (org.springframework.data.domain.Pageable) any());
     }
 
     @Test
     void testExceptionThrownWhenLikeNotFoundByPostOrCommentId() {
         when(this.likeRepo.findByPcId((String) any(), (org.springframework.data.domain.Pageable) any())).thenReturn(new ArrayList<>());
         assertThrows(LikeNotFoundException.class, () -> this.likeServiceImpl.getLikes("1", 1, 3));
-        verify(this.likeRepo).findByPcId((String) any(), (org.springframework.data.domain.Pageable) any());
     }
 
     @Test
@@ -108,8 +99,6 @@ class LikeServiceTest {
         likeList.add(like);
         when(this.likeRepo.findByPcId((String) any(), (org.springframework.data.domain.Pageable) any())).thenReturn(likeList);
         assertThrows(CustomFeignException.class, () -> this.likeServiceImpl.getLikes("1", 1, 3));
-        verify(this.userFeign).getUserById((String) any());
-        verify(this.likeRepo).findByPcId((String) any(), (org.springframework.data.domain.Pageable) any());
     }
 
     @Test
@@ -146,8 +135,6 @@ class LikeServiceTest {
         like.setPcId("1");
         when(this.likeRepo.findByPcIdAndId((String) any(), (String) any())).thenReturn(like);
         assertThrows(CustomFeignException.class, () -> this.likeServiceImpl.getLikeDetails("1", "1"));
-        verify(this.userFeign).getUserById((String) any());
-        verify(this.likeRepo).findByPcIdAndId((String) any(), (String) any());
     }
 
     @Test
@@ -164,9 +151,6 @@ class LikeServiceTest {
         LikeDto actualCreateLikeResult = this.likeServiceImpl.createLike("1", new LikeRequest("1", "Liked By"));
         assertNull(actualCreateLikeResult.getId());
         assertEquals("1", actualCreateLikeResult.getPostOrCommentId());
-        assertSame(userDto, actualCreateLikeResult.getLikedBy());
-        verify(this.userFeign).getUserById((String) any());
-        verify(this.likeRepo).save((Like) any());
     }
 
     @Test
@@ -175,6 +159,5 @@ class LikeServiceTest {
         when(this.userFeign.getUserById((String) any())).thenReturn(new UserDto());
         when(this.likeRepo.save((Like) any())).thenThrow(mock(FeignException.class));
         assertThrows(CustomFeignException.class, () -> this.likeServiceImpl.createLike("1", likeRequest));
-        verify(this.likeRepo).save((Like) any());
     }
 }
